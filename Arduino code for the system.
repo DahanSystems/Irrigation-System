@@ -1,0 +1,56 @@
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(12, 11, 7, 6, 5, 4);
+
+int threshold = 600;          
+long duration = 20 * 1000L;    
+long waitTime = 60 * 60 * 1000L; 
+int PumpPin = 2;               
+int moist;                     
+int moisturePercentage;
+
+void setup() {
+  pinMode(PumpPin, OUTPUT);
+  pinMode(A0, INPUT);
+  Serial.begin(9600);
+  lcd.begin(16, 2); 
+  lcd.print("System Ready");
+  delay(2000);
+  lcd.clear();
+
+}
+
+void loop() {
+  moist = analogRead(A0);
+  
+  moisturePercentage = (1023 - moist) * 100 / 1023;
+
+  lcd.setCursor(0, 0);
+  lcd.print("Moisture: ");
+  lcd.print(moisturePercentage);
+  lcd.print("%   "); 
+
+  Serial.print("\nmoisture is:");
+  Serial.print(moist);
+
+  if (moist > threshold) {
+    digitalWrite(PumpPin, HIGH);
+    Serial.print("\nwatering!");
+    
+    lcd.setCursor(0, 1);
+    lcd.print("Watering...   "); 
+    
+    delay(duration);
+    
+    digitalWrite(PumpPin, LOW); 
+    lcd.setCursor(0, 1);
+    lcd.print("Done watering ");
+  } else {
+    Serial.print("\nno water needed");
+    
+    lcd.setCursor(0, 1);
+    lcd.print("No water needed");
+  }
+  
+  delay(waitTime);
+}
