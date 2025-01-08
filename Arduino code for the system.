@@ -22,8 +22,7 @@ void setup() {
 
 void loop() {
   moist = analogRead(A0);
-  
-  moisturePercentage = (1023 - moist) * 100 / 1023;
+  moisturePercentage = map(moist, 0, 1023, 100, 0);
 
   lcd.setCursor(0, 0);
   lcd.print("Moisture: ");
